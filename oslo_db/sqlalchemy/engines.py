@@ -111,49 +111,7 @@ def create_engine(sql_connection, sqlite_fk=False, mysql_sql_mode=None,
                   json_deserializer=None):
     """Return a new SQLAlchemy engine."""
 
-    url = sqlalchemy.engine.url.make_url(sql_connection)
-
-    engine_args = {
-        "pool_recycle": idle_timeout,
-        'convert_unicode': True,
-        'connect_args': {},
-        'logging_name': logging_name
-    }
-
-    _setup_logging(connection_debug)
-
-    _init_connection_args(
-        url, engine_args,
-        max_pool_size=max_pool_size,
-        max_overflow=max_overflow,
-        pool_timeout=pool_timeout,
-        json_serializer=json_serializer,
-        json_deserializer=json_deserializer,
-    )
-
-    engine = sqlalchemy.create_engine(url, **engine_args)
-
-    _init_events(
-        engine,
-        mysql_sql_mode=mysql_sql_mode,
-        sqlite_synchronous=sqlite_synchronous,
-        sqlite_fk=sqlite_fk,
-        thread_checkin=thread_checkin,
-        connection_trace=connection_trace
-    )
-
-    # register alternate exception handler
-    exc_filters.register_engine(engine)
-
-    # register engine connect handler
-    event.listen(engine, "engine_connect", _connect_ping_listener)
-
-    # initial connect + test
-    # NOTE(viktors): the current implementation of _test_connection()
-    #                does nothing, if max_retries == 0, so we can skip it
-    if max_retries:
-        test_conn = _test_connection(engine, max_retries, retry_interval)
-        test_conn.close()
+    engine = sqlalchemy.create_engine(sql_connection)
 
     return engine
 

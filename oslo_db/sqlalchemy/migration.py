@@ -124,18 +124,8 @@ def db_version(engine, abs_path, init_version):
     try:
         return versioning_api.db_version(engine, repository)
     except versioning_exceptions.DatabaseNotControlledError:
-        meta = sqlalchemy.MetaData()
-        meta.reflect(bind=engine)
-        tables = meta.tables
-        if len(tables) == 0 or 'alembic_version' in tables:
-            db_version_control(engine, abs_path, version=init_version)
-            return versioning_api.db_version(engine, repository)
-        else:
-            raise exception.DBMigrationError(
-                _("The database is not under version control, but has "
-                  "tables. Please stamp the current version of the schema "
-                  "manually."))
-
+        db_version_control(engine, abs_path, version=init_version)
+        return versioning_api.db_version(engine, repository)
 
 def db_version_control(engine, abs_path, version=None):
     """Mark a database as under this repository's version control.
