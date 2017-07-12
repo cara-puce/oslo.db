@@ -561,6 +561,7 @@ class _TransactionContext(object):
                 yield self.session
                 self._end_session_transaction(self.session)
             except Exception:
+                import pdb; pdb.set_trace()
                 self.session.rollback()
                 # TODO(zzzeek) do we need save_and_reraise() here,
                 # or do newer eventlets not have issues?  we are using
