@@ -559,10 +559,10 @@ class _TransactionContext(object):
             try:
                 self.session.begin()
                 yield self.session
+                import pdb; pdb.set_trace()
                 self._end_session_transaction(self.session)
             except Exception:
                 self.session.rollback()
-                import pdb; pdb.set_trace()
                 # TODO(zzzeek) do we need save_and_reraise() here,
                 # or do newer eventlets not have issues?  we are using
                 # raw "raise" in many other places in oslo.db already
