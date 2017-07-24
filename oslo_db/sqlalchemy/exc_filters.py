@@ -66,8 +66,8 @@ def filters(dbname, exception_type, regex):
          r"^.*\b1213\b.*detected deadlock/conflict.*")
 @filters("postgresql", sqla_exc.OperationalError, r"^.*deadlock detected.*")
 @filters("postgresql", sqla_exc.DBAPIError, r"^.*deadlock detected.*")
-@filters("cockroachdb", sqla_exc.OperationalError, r"^.*deadlock detected.*")
-@filters("cockroachdb", sqla_exc.DBAPIError, r"^.*deadlock detected.*")
+@filters("cockroachdb", sqla_exc.OperationalError, r"^.*")
+@filters("cockroachdb", sqla_exc.DBAPIError, r"^.*")
 @filters("ibm_db_sa", sqla_exc.DBAPIError, r"^.*SQL0911N.*")
 def _deadlock_error(operational_error, match, engine_name, is_disconnect):
     """Filter for MySQL or Postgresql deadlock error.
