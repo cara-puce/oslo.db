@@ -66,6 +66,8 @@ def filters(dbname, exception_type, regex):
          r"^.*\b1213\b.*detected deadlock/conflict.*")
 @filters("postgresql", sqla_exc.OperationalError, r"^.*deadlock detected.*")
 @filters("postgresql", sqla_exc.DBAPIError, r"^.*deadlock detected.*")
+@filters("cockroachdb", sqla_exc.OperationalError, r"^.*deadlock detected.*")
+@filters("cockroachdb", sqla_exc.DBAPIError, r"^.*deadlock detected.*")
 @filters("ibm_db_sa", sqla_exc.DBAPIError, r"^.*SQL0911N.*")
 def _deadlock_error(operational_error, match, engine_name, is_disconnect):
     """Filter for MySQL or Postgresql deadlock error.
@@ -106,7 +108,6 @@ def _deadlock_error(operational_error, match, engine_name, is_disconnect):
          (r'^.*duplicate\s+key.*"(?P<columns>[^"]+)"\s*\n.*'
           r'Key\s+\((?P<key>.*)\)=\((?P<value>.*)\)\s+already\s+exists.*$',
           r"^.*duplicate\s+key.*\"(?P<columns>[^\"]+)\"\s*\n.*$"))
-@filters("cockroachdb", sqla_exc.IntegrityError,(r"^.*duplicate\s+key.*\"(?P<columns>[^\"]+)\"\s*\n.*$"))
 def _default_dupe_key_error(integrity_error, match, engine_name,
                             is_disconnect):
     """Filter for MySQL or Postgresql duplicate key error.
